@@ -1,0 +1,80 @@
+<?php 
+$physicalStore = $this->getPhysicalStore();
+if($physicalStore && $physicalStore->getId()):
+?>
+<?php
+$physicalStoreStaffs = $this->getPhysicalStoreStaff();
+$name = $physicalStore->getName();
+$street = $physicalStore->getStreet();
+$postCode = $physicalStore->getPostcode();
+$phone = $physicalStore->getPhone();
+$city = $physicalStore->getCity();
+$latitude = $physicalStore->getLatitude();
+$longitude = $physicalStore->getLongitude();
+$openingHours = $physicalStore->getOpeningHours();
+$openingHours = unserialize($openingHours);
+$countryCode = $physicalStore->getCountryCode();
+
+$options = $this->getOneCountry();
+$googleMapsAddr = '';
+foreach($options as $v){
+    if($v['value']==$countryCode){
+      $googleMapsAddr = $street.",".$postCode.",".$city.",".$v['label'];
+    }
+}
+if(!empty($latitude) && !empty($longitude)){
+    $location = $latitude.",".$longitude;
+}else{
+    $location = $googleMapsAddr;
+}
+?>
+<div class="physicalstore-view">
+	<div class="row">
+	<div class="col-xs-12 col-ms-12 col-md-3">
+		<div class="physicalstore-store-left">
+			<h1 class="physicalstore-store-title"> <?php $name;?></h1>
+			<div class="choose-physicalstore-store">
+				<p><strong><?php echo $street.__(', ').$postCode.'&nbsp'.$name?></strong><br>
+				<?php echo __('Opening hours:')?>
+				<br><?php foreach ((array) $openingHours as $_hour): ?>
+                               <?php echo '*'.$_hour['day'].': '.$_hour['time'] ?><br>
+                       <?php endforeach; ?>
+                <?php echo __('Phone. ').$phone?><br></p>
+				<a class="show-list-de" href="<?php echo 'http://maps.google.com?q='.$googleMapsAddr?>"><?php echo __('Look at the magnified map')?></a>
+			</div>
+		
+		</div>
+	</div>
+	
+	<div class="col-xs-12 col-ms-12 col-md-9">
+	  <div class="physicalstore-view-box">
+	  <?php foreach($physicalStoreStaffs as $staff):?>
+	  <?php 
+          $firstName = $staff->getFirstname();
+          $lastName  = $staff->getLastname();
+          $phone     = $staff->getPhone();
+          $image     = $staff->getImage();
+          $title     = $staff->getTitle();
+          $email     = $staff->getEmail();
+          $imgUrl = $this->getImagePath().$image;
+	  ?>
+	  <?php 
+          if (!$image) {
+              $holder = $staff->getImageHolder() ? 'male' : 'female'; 
+	          $imgUrl = $this->getViewFileUrl( "Zou_Demo::images/{$holder}.jpg" );   
+           }
+	  ?>
+	      <div class="col-xs-12 col-ms-6 col-md-4 physicalstore-view-list">
+	        <div class="physicalstore-view-cont">
+	        <div class="physicalstore-view-img">
+	        <img src="<?php echo $imgUrl;?>" alt=""></div>
+	        <p class="physicalstore-view-sm-title"><strong><?php echo $title;?></strong>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+	        <p><?php echo $firstName.'&nbsp'.$lastName;?><br><?php echo __('Phone. ').$phone;?><br><?php echo $email;?><strong>&nbsp;</strong><strong> <br></strong></p>
+	        </div>
+	      </div>
+      <?php endforeach;?>
+	  </div>
+	</div>
+	</div>
+</div>
+<?php endif;?>

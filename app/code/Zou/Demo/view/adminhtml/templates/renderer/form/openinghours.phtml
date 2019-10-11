@@ -1,0 +1,64 @@
+<div class="admin__field field field-openinghours" data-ui-id="physicalstore-edit-form-fieldset-element-form-field-openinghours">
+	<label class="label admin__field-label" for="page_openinghours" data-ui-id="physicalstore-edit-form-fieldset-element-text-physicalstore-openinghours-label"><span>Opening Hours</span></label>
+    <div class="admin__field-control control">
+    	<div id="manage-options-panel" data-index="attribute_options_select_container">
+    	<table class="admin__control-table" data-index="attribute_options_select">
+            <thead>
+                <tr id="attribute-options-table">
+                    <th class="col-default control-table-actions-th"><span><?php /* @escapeNotVerified */ echo __('Days') ?></span></th>
+                    <th class="col-default control-table-actions-th"><span><?php /* @escapeNotVerified */ echo __('Time') ?></span></th>
+                    <th class="col-delete">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody data-role="options-container" class="ignore-validate"></tbody>
+            <tfoot>
+            <tr>
+                <th colspan="1" class="col-actions-add">
+                        <button id="add_new_option_button" data-action="add_new_row" title="<?php /* @escapeNotVerified */ echo __('Add Option'); ?>"
+                            type="button" class="action- scalable add">
+                             <span><?php /* @escapeNotVerified */ echo __('Add Option'); ?></span>
+                        </button>
+                </th>
+            </tr>
+            </tfoot>
+        </table>
+        <input type="hidden" id="option-count-check" value="" />
+   </div>
+   <script id="row-template" type="text/x-magento-template">
+         <tr>
+            <td class="col-default control-table-actions-cell">
+                <input class="input" type="input" name="ohoursoption[<%- data.id %>][day]" value="<%- data.day %>"/>
+            </td>
+            <td class="col-default control-table-actions-cell">
+                <input class="input" type="input" name="ohoursoption[<%- data.id %>][time]" value="<%- data.time %>"/>
+            </td>
+            <td id="delete_button_container_<%- data.id %>" class="col-delete">
+                <input type="hidden" class="delete-flag" name="ohoursoption[delete][<%- data.id %>]" value="" />
+                    <button id="delete_button_<%- data.id %>" title="<?php /* @escapeNotVerified */ echo __('Delete') ?>" type="button"
+                        class="action- scalable delete delete-option"
+                        >
+                        <span><?php /* @escapeNotVerified */ echo __('Delete') ?></span>
+                    </button>
+            </td>
+        </tr>
+    </script>
+    <?php
+    $values = [];
+    foreach($block->getOptionValues() as $value) {
+        $value = $value->getData();
+        $values[] = is_array($value) ? array_map("htmlspecialchars_decode", $value) : $value;
+    }
+    ?>
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                "Zou_Demo/js/options": {
+                    "attributesData": <?php /* @noEscape */ echo json_encode($values, JSON_HEX_QUOT); ?>,
+                    "isSortable":  false,
+                    "isReadOnly": false
+                }
+            }
+        }
+    </script>
+   </div>
+</div>

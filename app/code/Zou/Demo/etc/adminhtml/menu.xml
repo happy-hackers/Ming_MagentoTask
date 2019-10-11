@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    	<!-- 添加自定义链接到导航 -->
+    	<add id="Zou_Demo::physicalStores" title="Physical Store" module="Zou_Demo" sortOrder="10" resource="Zou_Demo::physicalStores" parent="Magento_Backend::stores"/>
+		<add id="Zou_Demo::physicalStores_physicalStores" title="Manage PhysicalStores" module="Zou_Demo" sortOrder="10" parent="Zou_Demo::physicalStores" action="demoadmin/physicalStore" resource="Zou_Demo::physicalStores_physicalStore"/>
+		<add id="Zou_Demo::physicalStores_PhysicalStoresStaff" title="Manage PhysicalStores Staff" module="Zou_Demo" sortOrder="10" parent="Zou_Demo::physicalStores" action="demoadmin/physicalStoreStaff" resource="Zou_Demo::physicalStores_PhysicalStoreStaff"/>
+    </menu>
+</config>
