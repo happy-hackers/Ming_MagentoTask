@@ -5,6 +5,8 @@ return [
         'Magento_Directory' => 1,
         'Magento_Theme' => 1,
         'Custom_Grid' => 1,
+        'Custom_Order' => 1,
+        'Custom_User' => 1,
         'Magento_Backend' => 1,
         'Magento_Variable' => 1,
         'Magento_Eav' => 1,
@@ -201,7 +203,6 @@ return [
         'Magento_WishlistAnalytics' => 1,
         'Magestore_HelloMagento' => 1,
         'Temando_Shipping' => 1,
-        'Vertex_Tax' => 1,
-        'Zou_Demo' => 1
+        'Vertex_Tax' => 1
     ]
 ];
