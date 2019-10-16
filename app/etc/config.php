@@ -4,8 +4,6 @@ return [
         'Magento_Store' => 1,
         'Magento_Directory' => 1,
         'Magento_Theme' => 1,
-        'Custom_Grid' => 1,
-        'Custom_Order' => 1,
         'Custom_User' => 1,
         'Magento_Backend' => 1,
         'Magento_Variable' => 1,
@@ -201,7 +199,6 @@ return [
         'Magento_CatalogWidget' => 1,
         'Dotdigitalgroup_Email' => 1,
         'Magento_WishlistAnalytics' => 1,
-        'Magestore_HelloMagento' => 1,
         'Temando_Shipping' => 1,
         'Vertex_Tax' => 1
     ]

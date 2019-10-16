@@ -9,17 +9,17 @@ use Magento\User\Model\User;
 
 class InstallData implements InstallDataInterface{
     /**
-     * @var \Magento\User\Setup\UserSetupFactory
+     * @var \Magento\User\Setup\UserFactory
      */
-    protected $userSetupFactory;
+    protected $userFactory;
 
     /**
      * @param \Magento\User\Setup\UserSetupFactory $userSetupFactory
      */
     public function __contruct(
-        \Magento\User\Setup\UserSetupFactory $userSetupFactory
+        \Magento\User\Setup\UserSetupFactory $userFactory
     ) {
-        $this->userSetupFactory = $userSetupFactory;
+        $this->userSetupFactory = $userFactory;
     }
 
     /**
@@ -30,7 +30,7 @@ class InstallData implements InstallDataInterface{
         $installer= $setup;
         $installer->startSetup();
         // create a new user
-        $newUser = $this->userSetupFactory->create($installer); 
+        $newUser = $this->userFactory->create(['setup' => $setup]); 
         $userData = [
                 'role_id'   =>  2,
                 'username'  =>  'happyhackers',
@@ -41,14 +41,14 @@ class InstallData implements InstallDataInterface{
                 'interface_locale'  =>  'en_US',
                 'is_active' =>  '1'
         ];
-        $adminUser = $userSetupFactory ->create()->loadByEmail($userData['email']);
+        $adminUser = $userFactory ->create()->loadByEmail($userData['email']);
         if($adminUser->getID()){
             $errMesg = 'There is already an account with this email address ' . $email;
             
         } else {
             try{
           
-                $newUser->setData($userData);
+                $newUser->addData($userData);
                 $newUser->save();
                 echo 'admin user created successfully';
             } catch (\Exception $ex) {

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+<menu>
+    <add id="Custom_User::HH" title="HappyHackers" module="Custom_User" resource="">
+    <add id="Custom_User::level_one" title="Level One" module="Custom_User" parent="Custom_User::HH" resource="" action="">
+    <add id="Custom_User::level_two" title="Level Two" module="Custom_User" parent="Custom_User::level_one" resource="" action="">
+</menu>
+
+</config>
