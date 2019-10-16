@@ -5,7 +5,6 @@ return [
         'Magento_Directory' => 1,
         'Magento_Theme' => 1,
         'Custom_Grid' => 1,
-        'Custom_Order' => 1,
         'Magento_Backend' => 1,
         'Magento_Variable' => 1,
         'Magento_Eav' => 1,
