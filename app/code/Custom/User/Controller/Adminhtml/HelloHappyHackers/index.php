@@ -44,5 +44,6 @@ class Index extends \Magento\Backend\App\Action implements HttpGetActionInterfac
         $resultPage->getConfig()->getTitle()->prepend(__('HH Customer Information'));
         $resultPage->addBreadcrumb(__('Customers'), __('Customers'));
         $resultPage->addBreadcrumb(__('HH Customer Information'), __('HH Customer Information'));
+        return $resultPage;
     }
 }
