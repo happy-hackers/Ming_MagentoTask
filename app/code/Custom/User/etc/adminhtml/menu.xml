@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+        <!--
+        /**
+         * Copyright © Magento, Inc. All rights reserved.
+         * See COPYING.txt for license details.
+         */
+        -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Custom_User::happyhacker" title="HappyHackers" translate="title" module="Custom_User" sortOrder="60" resource="Custom_User::happyhacker"/>
+        <add id="Custom_User::happy" title="Happy" translate="title" module="Custom_User" sortOrder="40" parent="Custom_User::happyhacker"  resource="Custom_User::happyhacker_happy"/>
+        <add id="Custom_User::hacker" title="Hacker" translate="title" module="Custom_User" sortOrder="10" parent="Custom_User::happy"  resource="Custom_User::happyhacker_hacker"/>
+    </menu>
+</config>
