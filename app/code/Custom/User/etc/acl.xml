@@ -3,12 +3,11 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
     <acl>
         <resources>
-            <resource id="Magento_Backend:admin">
-                <resources>
-                    <resource id="Custom_User:HH" title="HH" translate="title" sortOrder="40">
-                    <resource id="Custom_User:"
-                </resource>
-
+            <resource id="Magento_Backend:admin"/>
+                <resource id="Custom_User:acl" title="HH" translate="title" sortOrder="100"/>
+                    <resource id="Custom_User::levelone" title="Level One" translate="title" sortOrder="20"/>
+                    <resource id="Custom_User::leveltwo" title="Level Two" translate="title" sortOrder="30"/>
+                <resource/>
             </resources>
         </resources>
     </acl>
