@@ -4,5 +4,4 @@
     <sequence>
         <module name="Magento_User"/>
     </sequence>
-
 </config>

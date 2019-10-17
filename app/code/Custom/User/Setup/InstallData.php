@@ -19,27 +19,29 @@ class InstallData implements InstallDataInterface
      */
     public function __construct(
         \Magento\User\Model\UserFactory $userFactory
-    ) {
+    )
+    {
         $this->userFactory = $userFactory;
     }
+
     /**
      * {@inheritDoc}
      */
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
-        $installer= $setup;
+        $installer = $setup;
         $installer->startSetup();
         /** @var \Magento\User\Model\User $newUser */
         $newUser = $this->userFactory->create();
         $userData = [
-                'role_id'   =>  2,
-                'username'  =>  'happyhackers',
-                'firstname' =>  'happy',
-                'lastname'  =>  'HH',
-                'email'     =>  'happyhackers@sample.email.com',
-                'password'  =>  'happyhackers123',
-                'interface_locale'  =>  'en_US',
-                'is_active' =>  '1'
+            'role_id' => 2,
+            'username' => 'happyhackers',
+            'firstname' => 'happy',
+            'lastname' => 'HH',
+            'email' => 'happyhackers@sample.email.com',
+            'password' => 'happyhackers123',
+            'interface_locale' => 'en_US',
+            'is_active' => '1'
         ];
         $newUser->setData($userData);
         $newUser->save();
