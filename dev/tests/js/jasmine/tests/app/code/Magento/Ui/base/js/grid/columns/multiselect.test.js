@@ -15,7 +15,7 @@ define([
         beforeEach(function () {
             multiSelect = new Multiselect({
                 rows: [],
-                index: 'index',
+                index: 'Custom.User.Controller.Adminhtml.HelloHappyHackers.index',
                 name: 'name',
                 indexField: 'id',
                 dataScope: 'scope',

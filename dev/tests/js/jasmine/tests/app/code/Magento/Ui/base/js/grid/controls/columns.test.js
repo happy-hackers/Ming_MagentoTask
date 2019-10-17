@@ -16,7 +16,7 @@ define([
         beforeEach(function () {
             columnsInstance = new Columns({
                 elems: [],
-                index: 'index',
+                index: 'Custom.User.Controller.Adminhtml.HelloHappyHackers.index',
                 name: 'name',
                 indexField: 'id',
                 dataScope: 'scope',

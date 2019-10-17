@@ -108,10 +108,10 @@ angular.module('install', ['ngStorage'])
     .service('progress', ['$http', function ($http) {
         return {
             get: function (callback) {
-                $http.post('index.php/install/progress').then(callback, function errorCallback() {});
+                $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/install/progress').then(callback, function errorCallback() {});
             },
             post: function (data, callback) {
-                $http.post('index.php/install/start', data).then(callback, function errorCallback() {});
+                $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/install/start', data).then(callback, function errorCallback() {});
             }
         };
     }]);

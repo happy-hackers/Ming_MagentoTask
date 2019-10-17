@@ -30,7 +30,7 @@ angular.module('customize-your-store', ['ngStorage', 'ngSanitize'])
         $scope.loading = false;
 
         if (!$localStorage.store) {
-            $http.get('index.php/customize-your-store/default-time-zone',{'responseType' : 'json'})
+            $http.get('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/customize-your-store/default-time-zone',{'responseType' : 'json'})
                 .then(function successCallback(resp) {
                     $scope.store.timezone = resp.data.defaultTimeZone;
                 }, function errorCallback() {
@@ -46,7 +46,7 @@ angular.module('customize-your-store', ['ngStorage', 'ngSanitize'])
             $state.loadModules();
             $localStorage.store = $scope.store;
             $scope.loading = true;
-            $http.post('index.php/modules/all-modules-valid', $scope.store)
+            $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/modules/all-modules-valid', $scope.store)
                 .then(function successCallback(resp) {
                     $scope.checkModuleConstraints.result = resp.data;
 
@@ -63,7 +63,7 @@ angular.module('customize-your-store', ['ngStorage', 'ngSanitize'])
         };
 
         if (!$scope.store.loadedAllModules) {
-            $http.get('index.php/modules').then(function successCallback(resp) {
+            $http.get('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/modules').then(function successCallback(resp) {
                 $state.loadedModules = resp.data;
                 $scope.store.showModulesControl = true;
 
@@ -122,7 +122,7 @@ angular.module('customize-your-store', ['ngStorage', 'ngSanitize'])
             var moduleStatus = (idx > -1) ? true : false;
             var allParameters = {'allModules' : $scope.store.allModules, 'selectedModules' : $scope.store.selectedModules, 'module' : module, 'status' : moduleStatus};
 
-            $http.post('index.php/modules/validate', allParameters)
+            $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/modules/validate', allParameters)
                 .then(function successCallback(resp) {
                     $scope.checkModuleConstraints.result = resp.data;
 

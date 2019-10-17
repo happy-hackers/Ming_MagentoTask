@@ -14,7 +14,7 @@ angular.module('extension-grid', ['ngStorage'])
             $scope.syncError = false;
             $scope.currentPage = 1;
 
-            $http.get('index.php/extensionGrid/extensions').then(function successCallback(resp) {
+            $http.get('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/extensionGrid/extensions').then(function successCallback(resp) {
                 var data = resp.data;
 
                 $scope.extensions = data.extensions;
@@ -80,7 +80,7 @@ angular.module('extension-grid', ['ngStorage'])
 
             $scope.sync = function() {
                 $scope.isHiddenSpinner = false;
-                $http.get('index.php/extensionGrid/sync').then(function successCallback(resp) {
+                $http.get('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/extensionGrid/sync').then(function successCallback(resp) {
                     var data = resp.data;
 
                     if (typeof data.lastSyncData.lastSyncDate !== 'undefined') {

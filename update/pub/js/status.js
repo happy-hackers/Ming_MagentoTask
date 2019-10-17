@@ -15,7 +15,7 @@ angular.module('status', ['ngStorage'])
             $scope.isConsole = $scope.isConsole === false;
         };
         $scope.rollback = function () {
-            $http.post('index.php/rollback');
+            $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/rollback');
             $scope.error = true;
             $scope.rollbackStarted = true;
         };
@@ -25,7 +25,7 @@ angular.module('status', ['ngStorage'])
 
         $interval(
             function () {
-                $http.post('index.php/status')
+                $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/status')
                     .success(function (result) {
                         if (result['complete']) {
                             $localStorage.rollbackStarted = $scope.rollbackStarted;

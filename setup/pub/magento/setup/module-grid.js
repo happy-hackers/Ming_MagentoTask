@@ -8,7 +8,7 @@ angular.module('module-grid', ['ngStorage'])
     .controller('moduleGridController', ['$rootScope', '$scope', '$http', '$localStorage', '$state', 'titleService', 'paginationService',
         function ($rootScope, $scope, $http, $localStorage, $state, titleService, paginationService) {
             $rootScope.modulesProcessed = false;
-            $http.get('index.php/moduleGrid/modules').then(function successCallback(resp) {
+            $http.get('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/moduleGrid/modules').then(function successCallback(resp) {
                 var data = resp.data;
 
                 $scope.modules = data.modules;

@@ -15,7 +15,7 @@ define([
         beforeEach(function () {
             group = new Group({
                 elems: [],
-                index: 'index',
+                index: 'Custom.User.Controller.Adminhtml.HelloHappyHackers.index',
                 name: 'name',
                 indexField: 'id',
                 dataScope: 'scope',

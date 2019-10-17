@@ -1,9 +1,14 @@
 <?xml version="1.0"?>
-<config  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        <add id="Custom_User::HH" title="HappyHackers" module="Custom_User" resource="Custom_User::HH"/>
-        <add id="Custom_User::level_one" title="Level One" module="Custom_User" parent="Custom_User::HH" resource="Custom_User::levelone"/>
-        <add id="Custom_User::level_two" title="Level Two" module="Custom_User" parent="Custom_User::level_one" resource="Custom_User::leveltwo"/>
+        <add id="Custom_User::happyhacker" title="Happy" translate="title" module="Custom_User" sortOrder="60" resource="Custom_User::happyhacker"/>
+        <add id="Custom_User::happyhacker_happy" title="HappyCompany" translate="title" module="Custom_User" sortOrder="40" parent="Custom_User::happyhacker" resource="Custom_User::happyhacker_happy"/>
+        <add id="Custom_User::happyhacker_happy_one" title="Happy Two" translate="title" module="Custom_User" sortOrder="10" parent="Custom_User::happyhacker_happy" action="happyadminpage/HelloHappyHackers" resource="Custom_User::happy_one"/>
     </menu>
-
 </config>

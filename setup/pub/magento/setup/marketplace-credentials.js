@@ -42,7 +42,7 @@ angular.module('marketplace-credentials', ['ngStorage'])
             $scope.upgradeProcessError = false;
             if ($state.current.type == 'upgrade') {
                 $scope.isHiddenSpinner = false;
-                $http.get('index.php/select-version/installedSystemPackage', {'responseType' : 'json'})
+                $http.get('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/select-version/installedSystemPackage', {'responseType' : 'json'})
                     .then(function successCallback(resp) {
                         var data = resp.data;
 

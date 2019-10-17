@@ -12,7 +12,7 @@ angular.module('data-option', ['ngStorage'])
         };
 
         if ($localStorage.componentType === 'magento2-module') {
-            $http.post('index.php/data-option/hasUninstall', {'moduleName' : $localStorage.moduleName})
+            $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/data-option/hasUninstall', {'moduleName' : $localStorage.moduleName})
                 .then(function successCallback(resp) {
                     $scope.component.hasUninstall = resp.data.hasUninstall;
                 });

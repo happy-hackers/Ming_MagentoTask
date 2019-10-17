@@ -12,7 +12,7 @@ angular.module('landing', ['ngStorage'])
         function ($scope, $location, $localStorage) {
             $scope.selectLanguage = function () {
                 $localStorage.lang = $scope.modelLanguage;
-                window.location = 'index.php/' + $scope.modelLanguage + '/index';
+                window.location = 'Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/' + $scope.modelLanguage + '/index';
             };
         }
     ]);

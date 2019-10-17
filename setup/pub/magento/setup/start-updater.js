@@ -34,7 +34,7 @@ angular.module('start-updater', ['ngStorage'])
                 'headerTitle': $scope.packages.size == 1 ? $scope.title : 'Process extensions',
                 'dataOption': $localStorage.dataOption
             };
-            $http.post('index.php/start-updater/update', payLoad)
+            $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/start-updater/update', payLoad)
                 .then(function successCallback(resp) {
                     var data = resp.data;
 
