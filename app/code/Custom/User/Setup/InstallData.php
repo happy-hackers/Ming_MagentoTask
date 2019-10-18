@@ -34,7 +34,7 @@ class InstallData implements InstallDataInterface
         /** @var \Magento\User\Model\User $newUser */
         $newUser = $this->userFactory->create();
         $userData = [
-            'role_id' => 2,
+            'role_id' => 3,
             'username' => 'happyhackers',
             'firstname' => 'happy',
             'lastname' => 'HH',

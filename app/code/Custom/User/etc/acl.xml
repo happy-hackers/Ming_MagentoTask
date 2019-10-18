@@ -9,9 +9,15 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="Custom_User::happyhacker" title="Happy Hackers" translate="title" sortOrder="60" />
-                <resource id="Custom_User::happyhacker_happy" title="HappyCompany" translate="title" sortOrder="40" />
-                <resource id="Custom_User::happyhacker_hacker" title="Level Two" translate="title" sortOrder="10" />
+                <resource id="Custom_User::happyhacker" title="Happy Hackers" translate="title" sortOrder="60" >
+                    <resource id="Custom_User::happy_grandma" title="HappyGrandma" translate="title" sortOrder="40" >
+                        <resource id="Custom_User::Mahaone" title="HackerMaOne" translate="title" sortOrder="10" />
+                        <resource id="Custom_User::MaHatwo" title="HackeMaTwo" translate="title" sortOrder="20" />
+                    </resource>
+                    <resource id="Custom_User::happy_grandpa" title="HappyGrandpa" translate="title" sortOrder="50" >
+                        <resource id="Custom_User::PaHaone" title="HackerPaTwo" translate="title" sortOrder="10" />
+                    </resource>
+                </resource>
             </resource>
         </resources>
     </acl>

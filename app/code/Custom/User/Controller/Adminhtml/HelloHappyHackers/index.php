@@ -33,7 +33,7 @@ class Index extends \Magento\Backend\App\Action implements HttpGetActionInterfac
     }
 
     /**
-     * Load the page defined in view/adminhtml/layout/happyadminpage_HelloHappyHackers_index.xml
+     * Load the page defined in view/adminhtml/layout/happyadminpage_hellohappyhackers_index.xml
      *
      * @return \Magento\Framework\View\Result\Page
      */
