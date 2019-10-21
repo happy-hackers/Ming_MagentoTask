@@ -73,9 +73,33 @@ class InstallData implements InstallDataInterface
                ]
            ];
            //set color config attributes below
-           $colorID = $configurableProduct->getResource()->getAttribute('color')->getID();
-           
+           $colorId = $configurableProduct->getResource()->getAttribute('color')->getID();
+           $configurableProduct->getTypeInstance()->setUsedProductAttributeIds(array($colorId), $configurableProduct); //attribute ID of attribute 'size_general' in my stor
+           $configurableAttributesData = $configurableProduct->getTypeInstance()->getConfigurableAttributesAsArray($configurableProduct);
+           $configurableProduct->setCanSaveConfigurableAttributes(true);
+           $configurableProduct->setConfigurableAttributesData($configurableAttributesData);
+           $configurableProductsData = array();
+           $configurableProductsData[$simpleProductId] = array( // id of a simple product associated with the configurable
+               '0' => array(
+                   'label'          => 'Magento Orange!', //attribute label
+                   'attribute_id'   => $colorId, //color attribute id
+                   'value_index'    => '193',
+                   'is_percent'     => 0,
+                   'pricing_value'  => '10',
 
+               )
+           );
+           $configurableProduct->setConfigurableProductsData($configurableProductsData);
+           $configurableProduct->save();
+           $configurableProductId = $configurableProduct->getId();
+           //Assign simple products to the configurable product in Magento 2
+           $configurableProduct = $this->productFactory->create()->load($configurableProductId); // Load Configurable Product
+           //set only one simple products into congigurable product
+           $simpleProductIds = array($simpleProductId);
+           $configurableProduct->setAssociatedProductIds($simpleProductIds); // Assign simple product id
+           $configurableProduct->setCanSaveConfigurableAttributes(true);
+           $configurableProduct->save();
 
+           $installer->endSetup();
        }
 }
