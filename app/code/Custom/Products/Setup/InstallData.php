@@ -8,6 +8,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 
 class InstallData implements InstallDataInterface
 {
+
        /**
         * @var \Magento\Catalog\Model\ProductFactory
         */
