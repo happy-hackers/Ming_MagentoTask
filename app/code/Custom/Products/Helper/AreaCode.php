@@ -8,21 +8,15 @@ class AreaCode
     private $appState;
 
     public function __construct(
-        \Magento\Framework\App\State $appState,
-        $name=null
+        \Magento\Framework\App\State $appState
     )
     {
         $this->appState = $appState;
-        parent::__construct($name);
+
     }
 
     public function execute()
     {
-        $originalArea = $this->appState->getAreaCode();
         $this->appState->setAreaCode(\Magento\Framework\App\Area::AREA_GLOBAL);
-        /* ... your command code here ... */
-
-        //reset original code
-        $this->appState->setAreaCode($originalArea);
     }
 }
