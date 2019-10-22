@@ -6,12 +6,12 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Bundle\Api\Data\OptionInterfaceFactory;
 use Magento\Bundle\Api\Data\LinkInterfaceFactory;
-use \Magento\Catalog\Model\ProductFactory;
+use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-
+use Magento\Catalog\Api\Data\ProductLinkInterfaceFactory;
 use Custom\Products\Helper\AreaCode;
 
-class UpgradeData implements  UpgradeDataInterface{
+class UpgradeData implements  UpgradeDataInterface {
 
     /**
      * @var \Magento\Catalog\Model\ProductFactory
@@ -34,11 +34,17 @@ class UpgradeData implements  UpgradeDataInterface{
     protected $linkFactory;
 
     /**
+     * @var ProductLinkInterfaceFactory;
+     */
+    protected $productLinkFactory;
+
+    /**
      * UpgradeData constructor.
-     * @param \Magento\Catalog\Model\ProductFactory $productFactory
+     * @param ProductFactory $productFactory
      * @param OptionInterfaceFactory $optionFactory
      * @param LinkInterfaceFactory $linkFactory
      * @param ProductRepositoryInterface $productRepository
+     * @param ProductLinkInterfaceFactory $ProductLinkInterfaceFactory
      * @param AreaCode $areaCode
      */
     public function __construct(
@@ -46,6 +52,7 @@ class UpgradeData implements  UpgradeDataInterface{
         OptionInterfaceFactory $optionFactory,
         LinkInterfaceFactory   $linkFactory,
         ProductRepositoryInterface $productRepository,
+        ProductLinkInterfaceFactory $ProductLinkInterfaceFactory,
         AreaCode $areaCode
     )
     {
@@ -54,6 +61,7 @@ class UpgradeData implements  UpgradeDataInterface{
         $this->linkFactory = $linkFactory;
         $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
+        $this->productLinkFactory = $ProductLinkInterfaceFactory;
 
 
     }
@@ -67,12 +75,14 @@ class UpgradeData implements  UpgradeDataInterface{
         if (version_compare($context->getVersion(), '1.0.8', '<')) {
             $simpleProductId = 2055;
             $this->createCongifProduct($simpleProductId);
-            $installer->endSetup();
         }
         if (version_compare($context->getVersion(), '1.1.0', '<')) {
             $this->createBundleProduct();
-            $installer->endSetup();
         }
+        if (version_compare($context->getVersion(), '1.1.4', '<')) {
+            $this->createGroupProduct();
+        }
+        $installer->endSetup();
     }
     public function createCongifProduct($simpleProductId){
         /** @var \Magento\Catalog\Model\Product $configurableProduct */
@@ -180,5 +190,50 @@ class UpgradeData implements  UpgradeDataInterface{
             }
             $bundleProduct->save();
         }
+    }
+    public function createGroupProduct(){
+        /** @var \Magento\Catalog\Model\Product $groupProduct */
+        $groupProduct = $this->productFactory->create();
+        //group product data
+        $data= [
+            'sku'                    =>  'simplegroup3',
+            'name'                   =>  'group product3',
+            'attribute_set_id'       =>  4, //default attribute set
+            'status'                 =>  \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED, //'1' -> ENABLE '2' -> DISABLE
+            'visibiity'              =>  4,
+            'type_id'                =>  'grouped',
+            'price'                  =>  122.25,
+            'stock_data'             =>  [
+
+                'use_config_manage_stock'    =>  0,
+                'manage_stock'               =>  1,
+                'is_in_stock'                =>  1,
+                'qty'                        =>  999,
+
+            ]
+        ];
+        $groupProduct->setData($data);
+        $groupProduct->save();
+        //child simple product
+        $childrenIds = array(1,2,3);
+        $associated = array();
+        $position = 0;
+        $groupProduct= $this->productRepository->getById(4); //get product group
+        foreach($childrenIds as $productId){
+            $position++;
+            //You need to load each product to get what you need in order to build $productLink
+            $linkedProduct = $this->productRepository->getById($productId);
+            $productLink = $this->productLinkFactory->create();
+            $productLink->setSku($groupProduct->getSku()) //sku of product group
+            ->setLinkType('associated')
+                ->setLinkedProductSku($linkedProduct->getSku())
+                ->setLinkedProductType($linkedProduct->getTypeId())
+                ->setPosition($position)
+                ->getExtensionAttributes()
+                ->setQty(1);
+            $associated[] = $productLink;
+        }
+        $groupProduct->setProductLinks($associated);
+        $this->productRepository->save($groupProduct);
     }
 }
