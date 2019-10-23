@@ -7,12 +7,16 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Bundle\Api\Data\OptionInterfaceFactory;
 use Magento\Bundle\Api\Data\LinkInterfaceFactory;
+use Magento\Catalog\Api\CategoryLinkManagementInterface;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\Data\ProductLinkInterfaceFactory;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Eav\Model\Entity\Attribute\SetFactory as AttributeSetFactory;
-use Magento\Catalog\Setup\CategorySetupFactory;
+use Magento\Catalog\Model\CategoryFactory;
+use Magento\Catalog\Model\Category;
+use Magento\Store\Model\Store;
+use     \Magento\Store\Model\StoreManagerInterface;
 use Custom\Products\Helper\AreaCode;
 
 
@@ -50,9 +54,9 @@ class UpgradeData implements  UpgradeDataInterface {
     protected $eavSetupFactory;
 
     /**
-     * @var CategorySetupFactory
+     * @var CategoryFactory
      */
-    protected $categorySetupFactory;
+    protected $categoryFactory;
 
     /**
      * @var AttributeSetFactory
@@ -65,13 +69,16 @@ class UpgradeData implements  UpgradeDataInterface {
     protected $attributeSet;
 
     /**
-     * @var State
+     * @var CategoryLinkManagementInterface
      */
-    protected $appState;
+    protected $categoryLinkManagement;
 
     /**
+     * @var  StoreManagerInterface
+     */
+    protected $storeManager;
+    /**
      * UpgradeData constructor.
-     * @param AreaCode $areaCode
      * @param ProductFactory $productFactory
      * @param OptionInterfaceFactory $optionFactory
      * @param LinkInterfaceFactory $linkFactory
@@ -81,7 +88,8 @@ class UpgradeData implements  UpgradeDataInterface {
      * @param EavSetupFactory $eavSetupFactory
      * @param AttributeSet $attributeSet
      * @param CategorySetupFactory $categorySetupFactory
-     * @param State $appState
+     * @param CategoryLinkManagementInterface $categoryLinkManagement
+     * @param AreaCode $areaCode
      */
     public function __construct(
         ProductFactory  $productFactory,
@@ -92,7 +100,9 @@ class UpgradeData implements  UpgradeDataInterface {
         AttributeSetFactory $attributeSetFactory,
         EavSetupFactory $eavSetupFactory,
         AttributeSet $attributeSet,
-        CategorySetupFactory $categorySetupFactory,
+        CategoryFactory $categoryFactory,
+        CategoryLinkManagementInterface $categoryLinkManagement,
+        StoreManagerInterface $storeManager,
         AreaCode $areaCode
 
     )
@@ -104,9 +114,12 @@ class UpgradeData implements  UpgradeDataInterface {
         $this->productRepository = $productRepository;
         $this->productLinkFactory = $ProductLinkInterfaceFactory;
         $this->eavSetupFactory = $eavSetupFactory;
-        $this->categorySetupFactory = $categorySetupFactory;
+        $this->categoryFactory = $categoryFactory;
+        $this->categoryLinkManagement = $categoryLinkManagement;
+        $this->storeManager = $storeManager;
         $this->attributeSetFactory = $attributeSetFactory;
         $this->attributeSet = $attributeSet;
+
 
 
     }
@@ -134,11 +147,14 @@ class UpgradeData implements  UpgradeDataInterface {
 //        if (version_compare($context->getVersion(), '1.1.4', '<')) {
 //            $this->createGroupProduct();
 //        }
-        if (version_compare($context->getVersion(), '1.1.8', '<')) {
-            $categorySetup = $this->categorySetupFactory->create(['setup' => $setup]);
-            $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
-            $this->createAttributeSet($categorySetup,$eavSetup);
-
+//        if (version_compare($context->getVersion(), '1.1.8', '<')) {
+//            $categorySetup = $this->categorySetupFactory->create(['setup' => $setup]);
+//            $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+//            $this->createAttributeSet($categorySetup,$eavSetup);
+//
+//        }
+        if (version_compare($context->getVersion(), '1.2.6','<')) {
+            $this->createCategory();
         }
         $installer->endSetup();
     }
@@ -367,4 +383,37 @@ class UpgradeData implements  UpgradeDataInterface {
 
 
     }
+    public function createCategory(){
+        // get the current stores root category
+        $parentId = $this->storeManager->getStore()->getRootCategoryId();
+        $parentCategory = $this->categoryFactory->create()->load($parentId);
+        $rootPath = $parentCategory->getPath();
+        /** @var \Magento\Catalog\Model\Category  $rootCategory*/
+        $rootCategory = $this->categoryFactory->create();
+        $data = [
+            'name' => 'custom2',
+            'path' => $rootPath, //root path id = 1
+            'is_active' => 1,
+            'url_key' => 'Test Category2',
+            'display_mode' => 'PRODUCTS'
+
+        ];
+        $rootCategory->setData($data);
+        $rootCategory->save();
+        // assign custom product into root cateogry
+//        $rootCategoryIds = $rootCategory->getId();
+
+//        $simpleproduct = $this->productRepository->get('testproduct2');
+//        $this->categoryLinkManagement->assignProductToCategories($simpleproduct->getSku(),[Category::TREE_ROOT_ID,$rootCategoryIds]);
+//
+//        $configproduct = $this->productRepository->get('test-configurable1');
+//        $this->categoryLinkManagement->assignProductToCategories($configproduct->getSku(),[Category::TREE_ROOT_ID,$rootCategoryIds]);
+//
+//        $bundleproduct = $this->productRepository->get('Bundle product2');
+//        $this->categoryLinkManagement->assignProductToCategories($bundleproduct->getSku(),[Category::TREE_ROOT_ID,$rootCategoryIds]);
+//
+//        $groupproduct = $this->productRepository->get('simplegroup3');
+//        $this->categoryLinkManagement->assignProductToCategories($groupproduct->getSku(),[Category::TREE_ROOT_ID,$rootCategoryIds]);
+    }
+
 }

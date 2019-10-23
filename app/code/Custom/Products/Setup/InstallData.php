@@ -42,7 +42,7 @@ class InstallData implements InstallDataInterface
 
            $simpleProduct = $this->productFactory->create();
            $productData = [
-               'sku'                    =>  'testproduct1',
+               'sku'                    =>  'testproduct10',
                'name'                   =>  'simpleproduct1',
                'attribute_set_id'       =>  4,
                'status'                 =>  \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED, //'1' -> ENABLE '2' -> DISABLE
