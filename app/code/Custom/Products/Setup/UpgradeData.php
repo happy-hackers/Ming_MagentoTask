@@ -1,6 +1,7 @@
 <?php
 namespace Custom\Products\Setup;
 
+use Magento\Catalog\Block\Adminhtml\Product\Edit\AttributeSet;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
@@ -9,43 +10,78 @@ use Magento\Bundle\Api\Data\LinkInterfaceFactory;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\Data\ProductLinkInterfaceFactory;
+use Magento\Eav\Setup\EavSetupFactory;
+use Magento\Eav\Model\Entity\Attribute\SetFactory as AttributeSetFactory;
+use Magento\Catalog\Setup\CategorySetupFactory;
 use Custom\Products\Helper\AreaCode;
+
+
 
 class UpgradeData implements  UpgradeDataInterface {
 
     /**
-     * @var \Magento\Catalog\Model\ProductFactory
+     * @var ProductFactory
      */
     protected $productFactory;
 
     /**
-     * @var ProductRepositoryInterface
+     * @var Magento\Catalog\Model\ProductFactory
      */
     protected $productRepository;
 
     /**
-     * @var OptionInterfaceFactory
+     * @var Magento\Bundle\Api\Data\OptionInterfaceFactory
      */
     protected $optionFactory;
 
     /**
-     * @var LinkInterfaceFactory
+     * @var Magento\Bundle\Api\Data\LinkInterfaceFactory
      */
     protected $linkFactory;
 
     /**
-     * @var ProductLinkInterfaceFactory;
+     * @var Magento\Bundle\Api\Data\LinkInterfaceFactory
      */
     protected $productLinkFactory;
 
     /**
+     * @var Magento\Eav\Setup\EavSetupFactory
+     */
+    protected $eavSetupFactory;
+
+    /**
+     * @var CategorySetupFactory
+     */
+    protected $categorySetupFactory;
+
+    /**
+     * @var AttributeSetFactory
+     */
+    protected $attributeSetFactory;
+
+    /**
+     * @var AttributeSet
+     */
+    protected $attributeSet;
+
+    /**
+     * @var State
+     */
+    protected $appState;
+
+    /**
      * UpgradeData constructor.
+     * @param AreaCode $areaCode
      * @param ProductFactory $productFactory
      * @param OptionInterfaceFactory $optionFactory
      * @param LinkInterfaceFactory $linkFactory
      * @param ProductRepositoryInterface $productRepository
      * @param ProductLinkInterfaceFactory $ProductLinkInterfaceFactory
-     * @param AreaCode $areaCode
+     * @param AttributeSetFactory $attributeSetFactory
+     * @param EavSetupFactory $eavSetupFactory
+     * @param AttributeSet $attributeSet
+     * @param CategorySetupFactory $categorySetupFactory
+     * @param State $appState
      */
     public function __construct(
         ProductFactory  $productFactory,
@@ -53,15 +89,24 @@ class UpgradeData implements  UpgradeDataInterface {
         LinkInterfaceFactory   $linkFactory,
         ProductRepositoryInterface $productRepository,
         ProductLinkInterfaceFactory $ProductLinkInterfaceFactory,
+        AttributeSetFactory $attributeSetFactory,
+        EavSetupFactory $eavSetupFactory,
+        AttributeSet $attributeSet,
+        CategorySetupFactory $categorySetupFactory,
         AreaCode $areaCode
+
     )
     {
-        $areaCode->execute();
+        $this->areaCode = $areaCode;
         $this->optionFactory = $optionFactory;
         $this->linkFactory = $linkFactory;
         $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
         $this->productLinkFactory = $ProductLinkInterfaceFactory;
+        $this->eavSetupFactory = $eavSetupFactory;
+        $this->categorySetupFactory = $categorySetupFactory;
+        $this->attributeSetFactory = $attributeSetFactory;
+        $this->attributeSet = $attributeSet;
 
 
     }
@@ -69,22 +114,35 @@ class UpgradeData implements  UpgradeDataInterface {
     /**
      * {@inheritDoc}
      */
+
+
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context){
+        $this->areaCode->execute();
         $installer = $setup;
         $installer->startSetup();
-        if (version_compare($context->getVersion(), '1.0.8', '<')) {
-            $simpleProductId = 2055;
-            $this->createCongifProduct($simpleProductId);
-        }
-        if (version_compare($context->getVersion(), '1.1.0', '<')) {
-            $this->createBundleProduct();
-        }
-        if (version_compare($context->getVersion(), '1.1.4', '<')) {
-            $this->createGroupProduct();
+
+        /**
+         * Enable/Change  below version  when using function
+         */
+//        if (version_compare($context->getVersion(), '1.0.8', '<')) {
+//            $simpleProductId = 2055;
+//            $this->createCongifgProduct($simpleProductId);
+//        }
+//        if (version_compare($context->getVersion(), '1.1.0', '<')) {
+//            $this->createBundleProduct();
+//        }
+//        if (version_compare($context->getVersion(), '1.1.4', '<')) {
+//            $this->createGroupProduct();
+//        }
+        if (version_compare($context->getVersion(), '1.1.8', '<')) {
+            $categorySetup = $this->categorySetupFactory->create(['setup' => $setup]);
+            $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+            $this->createAttributeSet($categorySetup,$eavSetup);
+
         }
         $installer->endSetup();
     }
-    public function createCongifProduct($simpleProductId){
+    public function createCongifgProduct($simpleProductId){
         /** @var \Magento\Catalog\Model\Product $configurableProduct */
         $configurableProduct = $this->productFactory->create();
         $configurableProduct->setSku('test-configurable1');
@@ -188,7 +246,7 @@ class UpgradeData implements  UpgradeDataInterface {
                 $extension->setBundleProductOptions($options);
                 $bundleProduct->setExtensionAttributes($extension);
             }
-            $bundleProduct->save();
+            $bundleProduct->getResource()->save();
         }
     }
     public function createGroupProduct(){
@@ -235,5 +293,78 @@ class UpgradeData implements  UpgradeDataInterface {
         }
         $groupProduct->setProductLinks($associated);
         $this->productRepository->save($groupProduct);
+    }
+    public function createAttributeSet($categorySetup,$eavSetup){
+
+        $attributeSet = $this->attributeSetFactory->create();
+        $entityTypeId = $categorySetup->getEntityTypeId(\Magento\Catalog\Model\Product::ENTITY);
+        $attributeSetId = $categorySetup->getDefaultAttributeSetId($entityTypeId);
+        $data = [
+            'attribute_set_name' => 'Shabimaya',
+            'entity_type_id' => $entityTypeId,
+            'sort_order' => 200,
+        ];
+        $attributeSet->setData($data);
+        $attributeSet->validate();
+        $attributeSet->save();
+        $attributeSet->initFromSkeleton($attributeSetId);
+        $attributeSet->save();
+
+        // Create custom attribute
+        $eavSetup->addAttribute(\Magento\Catalog\Model\Product::ENTITY,
+            'shabihaha1',
+            [
+                'type' => 'varchar',
+                'label' => 'Memory1',
+                'backend' => '',
+                'input' => 'text',
+                'wysiwyg_enabled'   => false,
+                'source' => '',
+                'required' => false,
+                'sort_order' => 5,
+                'global' => \Magento\Catalog\Model\ResourceModel\Eav\Attribute::SCOPE_STORE,
+                'used_in_product_listing' => true,
+                'visible_on_front' => true,
+                'attribute_set_id' => 'Shabimaya',
+            ]
+            );
+
+         $eavSetup->addAttribute(\Magento\Catalog\Model\Product::ENTITY,
+             'shabihehe1',
+             [
+                 'type' => 'varchar',
+                 'label' => 'shabi21',
+                 'backend' => '',
+                 'input' => 'text',
+                 'wysiwyg_enabled'   => false,
+                 'source' => '',
+                 'required' => false,
+                 'sort_order' => 5,
+                 'global' => \Magento\Catalog\Model\ResourceModel\Eav\Attribute::SCOPE_STORE,
+                 'used_in_product_listing' => true,
+                 'visible_on_front' => true,
+                 'attribute_set_id' => 'Shabimaya',
+             ]
+         );
+
+          $eavSetup->addAttribute(\Magento\Catalog\Model\Product::ENTITY,
+              'shabiheihei1',
+              [
+                  'type' => 'varchar',
+                  'label' => 'cool1',
+                  'backend' => '',
+                  'input' => 'text',
+                  'wysiwyg_enabled'   => false,
+                  'source' => '',
+                  'required' => false,
+                  'sort_order' => 5,
+                  'global' => \Magento\Catalog\Model\ResourceModel\Eav\Attribute::SCOPE_STORE,
+                  'used_in_product_listing' => true,
+                  'visible_on_front' => true,
+                  'attribute_set_id' => 'Shabimaya',
+              ]
+          );
+
+
     }
 }

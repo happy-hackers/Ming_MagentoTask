@@ -15,14 +15,16 @@ class InstallData implements InstallDataInterface
        protected $productFactory;
 
        /**
-        * @param \Magento\Catalog\Model\ProductFactory
+        * @var AreaCode
         */
+       protected $areaCode;
+
        public function __construct(
            \Magento\Catalog\Model\ProductFactory  $productFactory,
            AreaCode $areaCode
        )
        {
-            $areaCode->execute();
+            $this->areaCode = $areaCode;
             $this->productFactory = $productFactory;
 
        }
@@ -34,17 +36,19 @@ class InstallData implements InstallDataInterface
        {
            $installer = $setup;
            $installer->startSetup();
+           //set areacode
+           $this->areaCode->execute();
            /** @var \Magento\Catalog\Model\Product $simpleProduct */
 
            $simpleProduct = $this->productFactory->create();
            $productData = [
-               'sku'                    =>  'simplesampledata2',
-               'name'                   =>  'simple sample product2',
+               'sku'                    =>  'testproduct1',
+               'name'                   =>  'simpleproduct1',
                'attribute_set_id'       =>  4,
                'status'                 =>  \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED, //'1' -> ENABLE '2' -> DISABLE
                'visibiity'              =>  4,
                'type_id'                =>  'simple',
-               'price'                  =>  12.22,
+               'price'                  =>  12.232,
                'stock_data'             =>  [
 
                    'use_config_manage_stock'    =>  0,

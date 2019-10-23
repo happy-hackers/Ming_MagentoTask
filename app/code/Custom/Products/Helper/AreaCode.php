@@ -17,6 +17,11 @@ class AreaCode
 
     public function execute()
     {
-        $this->appState->setAreaCode(\Magento\Framework\App\Area::AREA_GLOBAL);
+
+        try {
+            $this->appState->setAreaCode(\Magento\Framework\App\Area::AREA_ADMINHTML);
+        } catch (\Magento\Framework\Exception\LocalizedException $exception) {
+            // do nothing
+        }
     }
 }
