@@ -1,4 +1,5 @@
 <?php
+
 namespace Custom\Email\Controller\Adminhtml\Index;
 
 use Custom\Email\Helper\Email;
@@ -9,10 +10,10 @@ use \Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterface;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Customer\Api\CustomerMetadataInterface;
+use Magento\Customer\Api\Data\CustomerInterface;
 
 
-
-class Save extends Action implements HttpPostActionInterface
+class Save extends \Magento\Customer\Controller\Adminhtml\Index\Save implements HttpPostActionInterface
 {
 
     /**
@@ -30,11 +31,10 @@ class Save extends Action implements HttpPostActionInterface
         Email $emailData,
         EventManager $eventManager
 
-    )
-    {
+    ) {
         $this->emailData = $emailData;
         $this->eventManager = $eventManager;
-        return parent::__construct($context);
+        // return parent::__construct($context);
     }
     public function execute()
     {
@@ -94,7 +94,7 @@ class Save extends Action implements HttpPostActionInterface
                 // Save customer
                 if ($customerId) {
                     // save customer
-                    $this->eventManager->dispatch('customer_change_info',['customer' => $customer, 'request' => $this->getRequest()]);
+                    $this->eventManager->dispatch('customer_change_info', ['customer' => $customer, 'request' => $this->getRequest()]);
                     $this->_customerRepository->save($customer);
 
                     $this->getEmailNotification()->credentialsChanged($customer, $currentCustomer->getEmail());
@@ -125,7 +125,7 @@ class Save extends Action implements HttpPostActionInterface
                 // Done Saving customer, finish save action
                 $this->_coreRegistry->register(RegistryConstants::CURRENT_CUSTOMER_ID, $customerId);
                 $this->messageManager->addSuccess(__('You saved the customer.'));
-                $returnToEdit = (bool)$this->getRequest()->getParam('back', false);
+                $returnToEdit = (bool) $this->getRequest()->getParam('back', false);
             } catch (\Magento\Framework\Validator\Exception $exception) {
                 $messages = $exception->getMessages();
                 if (empty($messages)) {
