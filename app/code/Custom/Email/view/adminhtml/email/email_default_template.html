@@ -1,0 +1,37 @@
+<!--@subject Subject Of your email  @-->
+<!--@vars {
+"var this.getUrl($store, 'customer/account/')":"Customer Account URL",
+"var customer.email":"Customer Email",
+"var customer.name":"Customer Name"
+} @-->
+
+{{template config_path="design/email/header_template"}} <!-- pathe of template header-->
+
+<!-- here $myvar1 , $myvar2, $myvar3, $myvar4, $myvar5, $myvar6 are variables in which we
+                                     asssign values when we use this template for send mail-->
+
+<table>
+    <tr class="email-intro">
+        <td>
+            <p class="greeting">{{trans
+                "Dear %customer_name,"
+                customer_name=$customer_name}}</p>
+            <p>
+                {{trans
+                "Your account %email, has been changed"
+                customer_email=$customer_email}}
+            </p>
+            <p>
+                {{trans
+                "If you have any quesion, please contact us immediately at %sender_email"
+                sender_email=$sender_email |escape}}.
+            </p>
+            <p>{{trans
+                "Thanks!"}}</p>
+        </td>
+    </tr>
+</table>
+
+
+
+{{template config_path="design/email/footer_template"}} <!--footer of template-->
