@@ -46,12 +46,14 @@ class Email extends AbstractHelper
         Context $context,
         StateInterface $inlineTranslation,
         Escaper $escaper,
-        TransportBuilder $transportBuilder
+        TransportBuilder $transportBuilder,
+        StoreManagerInterface $storeManager
     ) {
         parent::__construct($context);
         $this->inlineTranslation = $inlineTranslation;
         $this->escaper = $escaper;
         $this->transportBuilder = $transportBuilder;
+        $this->storeManager = $storeManager;
     }
 
     /**

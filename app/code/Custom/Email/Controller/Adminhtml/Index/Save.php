@@ -1,41 +1,188 @@
 <?php
 
+
+
 namespace Custom\Email\Controller\Adminhtml\Index;
 
-use Custom\Email\Helper\Email;
 
-//use Magento\Customer\Controller\Adminhtml\Index;
-use \Magento\Framework\App\Action\Context;
-use \Magento\Framework\App\Action\Action;
+
+use Magento\Customer\Controller\Adminhtml\Index;
+use Magento\Customer\Api\AddressMetadataInterface;
+use Magento\Customer\Controller\RegistryConstants;
+use Magento\Customer\Model\EmailNotificationInterface;
+use Magento\Customer\Model\Metadata\Form;
 use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterface;
-use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Customer\Api\CustomerMetadataInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Event\ManagerInterface as EventManager;
 
 
-class Save extends \Magento\Customer\Controller\Adminhtml\Index\Save implements HttpPostActionInterface
+class Save extends Index implements HttpPostActionInterface
 {
+    /**
+     * @var EmailNotificationInterface
+     */
+    private $emailNotification;
 
     /**
-     * @var Email
+     * Reformat customer account data to be compatible with customer service interface
+     *
+     * @return array
      */
-    protected $emailData;
+    protected function _extractCustomerData()
+    {
+        $customerData = [];
+        if ($this->getRequest()->getPost('customer')) {
+            $additionalAttributes = [
+                CustomerInterface::DEFAULT_BILLING,
+                CustomerInterface::DEFAULT_SHIPPING,
+                'confirmation',
+                'sendemail_store_id',
+                'extension_attributes',
+            ];
+
+            $customerData = $this->_extractData(
+                'adminhtml_customer',
+                CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER,
+                $additionalAttributes,
+                'customer'
+            );
+        }
+
+        if (isset($customerData['disable_auto_group_change'])) {
+            $customerData['disable_auto_group_change'] = (int) filter_var(
+                $customerData['disable_auto_group_change'],
+                FILTER_VALIDATE_BOOLEAN
+            );
+        }
+
+        return $customerData;
+    }
+
+    /**
+     * Perform customer data filtration based on form code and form object
+     *
+     * @param string $formCode The code of EAV form to take the list of attributes from
+     * @param string $entityType entity type for the form
+     * @param string[] $additionalAttributes The list of attribute codes to skip filtration for
+     * @param string $scope scope of the request
+     * @return array
+     */
+    protected function _extractData(
+        $formCode,
+        $entityType,
+        $additionalAttributes = [],
+        $scope = null
+    ) {
+        $metadataForm = $this->getMetadataForm($entityType, $formCode, $scope);
+        $formData = $metadataForm->extractData($this->getRequest(), $scope);
+        $formData = $metadataForm->compactData($formData);
+
+        // Initialize additional attributes
+        /** @var \Magento\Framework\DataObject $object */
+        $object = $this->_objectFactory->create(['data' => $this->getRequest()->getPostValue()]);
+        $requestData = $object->getData($scope);
+        foreach ($additionalAttributes as $attributeCode) {
+            $formData[$attributeCode] = isset($requestData[$attributeCode]) ? $requestData[$attributeCode] : false;
+        }
+
+        // Unset unused attributes
+        $formAttributes = $metadataForm->getAttributes();
+        foreach ($formAttributes as $attribute) {
+            /** @var \Magento\Customer\Api\Data\AttributeMetadataInterface $attribute */
+            $attributeCode = $attribute->getAttributeCode();
+            if ($attribute->getFrontendInput() != 'boolean'
+                && $formData[$attributeCode] === false
+            ) {
+                unset($formData[$attributeCode]);
+            }
+        }
+
+        if (empty($formData['extension_attributes'])) {
+            unset($formData['extension_attributes']);
+        }
+
+        return $formData;
+    }
+
+    /**
+     * Saves default_billing and default_shipping flags for customer address
+     *
+     * @param array $addressIdList
+     * @param array $extractedCustomerData
+     * @return array
+     */
+    protected function saveDefaultFlags(array $addressIdList, array & $extractedCustomerData)
+    {
+        $result = [];
+        $extractedCustomerData[CustomerInterface::DEFAULT_BILLING] = null;
+        $extractedCustomerData[CustomerInterface::DEFAULT_SHIPPING] = null;
+        foreach ($addressIdList as $addressId) {
+            $scope = sprintf('address/%s', $addressId);
+            $addressData = $this->_extractData(
+                'adminhtml_customer_address',
+                AddressMetadataInterface::ENTITY_TYPE_ADDRESS,
+                ['default_billing', 'default_shipping'],
+                $scope
+            );
+
+            if (is_numeric($addressId)) {
+                $addressData['id'] = $addressId;
+            }
+            // Set default billing and shipping flags to customer
+            if (!empty($addressData['default_billing']) && $addressData['default_billing'] === 'true') {
+                $extractedCustomerData[CustomerInterface::DEFAULT_BILLING] = $addressId;
+                $addressData['default_billing'] = true;
+            } else {
+                $addressData['default_billing'] = false;
+            }
+            if (!empty($addressData['default_shipping']) && $addressData['default_shipping'] === 'true') {
+                $extractedCustomerData[CustomerInterface::DEFAULT_SHIPPING] = $addressId;
+                $addressData['default_shipping'] = true;
+            } else {
+                $addressData['default_shipping'] = false;
+            }
+            $result[] = $addressData;
+        }
+        return $result;
+    }
+
+    /**
+     * Reformat customer addresses data to be compatible with customer service interface
+     *
+     * @param array $extractedCustomerData
+     * @return array
+     */
+    protected function _extractCustomerAddressData(array & $extractedCustomerData)
+    {
+        $addresses = $this->getRequest()->getPost('address');
+        $result = [];
+        if (is_array($addresses)) {
+            if (isset($addresses['_template_'])) {
+                unset($addresses['_template_']);
+            }
+
+            $addressIdList = array_keys($addresses);
+            $result = $this->saveDefaultFlags($addressIdList, $extractedCustomerData);
+        }
+
+        return $result;
+    }
 
     /**
      * @var EventManager
      */
     protected $eventManager;
 
-    public function __construct(
-        Context $context,
-        Email $emailData,
-        EventManager $eventManager
-
-    ) {
-        $this->emailData = $emailData;
-        $this->eventManager = $eventManager;
-        // return parent::__construct($context);
-    }
+    /**
+     * Save customer action
+     *
+     * @return \Magento\Backend\Model\View\Result\Redirect
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     public function execute()
     {
         $returnToEdit = false;
@@ -93,13 +240,14 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index\Save implements 
 
                 // Save customer
                 if ($customerId) {
-                    // save customer
-                    $this->eventManager->dispatch('customer_change_info', ['customer' => $customer, 'request' => $this->getRequest()]);
+                    //save customer
                     $this->_customerRepository->save($customer);
 
                     $this->getEmailNotification()->credentialsChanged($customer, $currentCustomer->getEmail());
+                    $this->_eventManager->dispatch('customer_change_info',
+                        ['customer' => $customer , 'request' => $this->getRequest()]);
                 } else {
-                    // new customer
+                    //create customer
                     $customer = $this->customerAccountManagement->createAccount($customer);
                     $customerId = $customer->getId();
                 }
@@ -125,7 +273,7 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index\Save implements 
                 // Done Saving customer, finish save action
                 $this->_coreRegistry->register(RegistryConstants::CURRENT_CUSTOMER_ID, $customerId);
                 $this->messageManager->addSuccess(__('You saved the customer.'));
-                $returnToEdit = (bool) $this->getRequest()->getParam('back', false);
+                $returnToEdit = (bool)$this->getRequest()->getParam('back', false);
             } catch (\Magento\Framework\Validator\Exception $exception) {
                 $messages = $exception->getMessages();
                 if (empty($messages)) {
@@ -171,6 +319,63 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index\Save implements 
         }
         return $resultRedirect;
     }
+
+    /**
+     * Get email notification
+     *
+     * @return EmailNotificationInterface
+     * @deprecated 100.1.0
+     */
+    private function getEmailNotification()
+    {
+        if (!($this->emailNotification instanceof EmailNotificationInterface)) {
+            return \Magento\Framework\App\ObjectManager::getInstance()->get(
+                EmailNotificationInterface::class
+            );
+        } else {
+            return $this->emailNotification;
+        }
+    }
+
+    /**
+     * Get metadata form
+     *
+     * @param string $entityType
+     * @param string $formCode
+     * @param string $scope
+     * @return Form
+     */
+    private function getMetadataForm($entityType, $formCode, $scope)
+    {
+        $attributeValues = [];
+
+        if ($entityType == CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER) {
+            $customerId = $this->getCurrentCustomerId();
+            if ($customerId) {
+                $customer = $this->_customerRepository->getById($customerId);
+                $attributeValues = $this->customerMapper->toFlatArray($customer);
+            }
+        }
+
+        if ($entityType == AddressMetadataInterface::ENTITY_TYPE_ADDRESS) {
+            $scopeData = explode('/', $scope);
+            if (isset($scopeData[1]) && is_numeric($scopeData[1])) {
+                $customerAddress = $this->addressRepository->getById($scopeData[1]);
+                $attributeValues = $this->addressMapper->toFlatArray($customerAddress);
+            }
+        }
+
+        $metadataForm = $this->_formFactory->create(
+            $entityType,
+            $formCode,
+            $attributeValues,
+            false,
+            Form::DONT_IGNORE_INVISIBLE
+        );
+
+        return $metadataForm;
+    }
+
     /**
      * Retrieve current customer ID
      *
@@ -187,3 +392,4 @@ class Save extends \Magento\Customer\Controller\Adminhtml\Index\Save implements 
         return $customerId;
     }
 }
+
