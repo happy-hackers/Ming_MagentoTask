@@ -4,29 +4,31 @@ namespace Custom\User\Controller\Adminhtml\HelloHappyHackers;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface as HttpGetActionInterface;
 use Magento\Framework\View\Result\PageFactory;
+use \Magento\Backend\App\Action;
 
-class Index extends \Magento\Backend\App\Action implements HttpGetActionInterface
+class Index extends Action
 {
     /**
      * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */
-    const ADMIN_RESOURCE = 'Custom_User::';
+    const ADMIN_RESOURCE = 'Custom_User::happyhacker';
+
     /**
-     * @var \Magento\Framework\View\Result\PageFactory
+     * @var PageFactory
      */
     protected $resultPageFactory;
 
     /**
      * Constructor
      *
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory
+        Context $context,
+        PageFactory $resultPageFactory
     ) {
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
