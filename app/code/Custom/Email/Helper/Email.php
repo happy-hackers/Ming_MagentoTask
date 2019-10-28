@@ -147,6 +147,4 @@ class Email extends AbstractHelper
         $this->inlineTranslation->resume();
         return $this;
     }
-
-
 }

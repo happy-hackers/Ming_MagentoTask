@@ -2,18 +2,22 @@
 
 namespace Custom\Email\Observer;
 
-
 use Magento\Framework\Event\ObserverInterface;
 use Custom\Email\Helper\Email;
 use Magento\Framework\Exception\MailException;
 use  Magento\Framework\Exception\NoSuchEntityException;
 
-
-
 class CustomerEditObserver implements ObserverInterface
 {
+    /**
+     * @var Email
+     */
     private $helperEmail;
 
+    /**
+     * CustomerEditObserver constructor.
+     * @param Email $helperEmail
+     */
     public function __construct(
         Email $helperEmail
     ) {
@@ -53,7 +57,4 @@ class CustomerEditObserver implements ObserverInterface
         $emailTemplateVariables['sender_email'] = $this->helperEmail->emailSender();
         return $this->helperEmail->sendEmail($emailTemplateVariables,$senderInfo,$receiverInfo);
     }
-
-
-
 }
