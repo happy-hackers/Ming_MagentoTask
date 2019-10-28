@@ -402,18 +402,13 @@ class UpgradeData implements  UpgradeDataInterface {
         $rootCategory->save();
         // assign custom product into root cateogry
 //        $rootCategoryIds = $rootCategory->getId();
-
 //        $simpleproduct = $this->productRepository->get('testproduct2');
 //        $this->categoryLinkManagement->assignProductToCategories($simpleproduct->getSku(),[Category::TREE_ROOT_ID,$rootCategoryIds]);
-//
 //        $configproduct = $this->productRepository->get('test-configurable1');
 //        $this->categoryLinkManagement->assignProductToCategories($configproduct->getSku(),[Category::TREE_ROOT_ID,$rootCategoryIds]);
-//
 //        $bundleproduct = $this->productRepository->get('Bundle product2');
 //        $this->categoryLinkManagement->assignProductToCategories($bundleproduct->getSku(),[Category::TREE_ROOT_ID,$rootCategoryIds]);
-//
 //        $groupproduct = $this->productRepository->get('simplegroup3');
 //        $this->categoryLinkManagement->assignProductToCategories($groupproduct->getSku(),[Category::TREE_ROOT_ID,$rootCategoryIds]);
     }
-
 }

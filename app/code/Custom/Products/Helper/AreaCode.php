@@ -1,7 +1,6 @@
 <?php
 namespace Custom\Products\Helper;
 
-
 class AreaCode
 {
     /** @var \Magento\Framework\App\State **/
@@ -12,16 +11,10 @@ class AreaCode
     )
     {
         $this->appState = $appState;
-
     }
 
     public function execute()
     {
-
-        try {
-            $this->appState->setAreaCode(\Magento\Framework\App\Area::AREA_ADMINHTML);
-        } catch (\Magento\Framework\Exception\LocalizedException $exception) {
-            // do nothing
-        }
+        $this->appState->setAreaCode(\Magento\Framework\App\Area::AREA_ADMINHTML);
     }
 }
