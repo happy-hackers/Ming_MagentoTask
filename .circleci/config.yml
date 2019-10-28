@@ -1,0 +1,110 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
+
+version: 2
+jobs:
+  build:
+    docker:
+      - image: rafaelcgstz/magento2
+    branch:
+      - master
+      - /feature_.*/
+      - /hotfix_.*/
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # "composer.lock" can be used if it is committed to the repo
+            - v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+
+      - run:
+          name: "Install Mage Composer keys"
+          command: composer global config http-basic.repo.magento.com $MAGENTO_KEY_PUBLIC $MAGENTO_KEY_PRIVATE
+      - run: composer install
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+      - save_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/project
+  linting:
+    docker:
+      - image: rafaelcgstz/magento2
+    branch:
+      - master
+      - /feature_.*/
+      - /hotfix_.*/
+    steps:
+      # - restore_cache:
+      #     keys:
+      #       - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - checkout
+      - run: composer global require "squizlabs/php_codesniffer=*"
+      - run:
+          name: linting
+          command: |
+            mkdir ~/linting_result
+            mkdir ~/linting_result/jest
+            ~/.composer/vendor/bin/phpcs --ignore=/root/project/app/code/Happyhackers/SapByDesign --extensions=php --standard=~/project/dev/tests/static/framework/Magento/ruleset.xml --report-junit=/root/linting_result/jest/result.xml --report-full=/root/linting_result/detail.txt  ~/project/app/code/Happyhackers/
+
+      - store_test_results:
+          path: '~/linting_result'
+      - store_artifacts:
+          path: /root/linting_result/
+
+  unittest:
+    docker:
+      - image: rafaelcgstz/magento2
+    working_directory: /root/project
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - run: composer global require "squizlabs/php_codesniffer=*"
+      - run:
+          name: unittest
+          command: |
+            php ./vendor/bin/phpunit -c dev/tests/unit/happyhackers.phpunit.xml
+
+      - store_test_results:
+          path: '~/linting_result'
+      - store_artifacts:
+          path: /root/linting_result/
+  deploy_to_staging:
+    docker:
+      - image: rafaelcgstz/magento2
+    branch:
+      - staging
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "4c:67:79:19:e2:17:0b:7b:b8:0b:36:18:dd:bb:ce:e2"
+      - run: ssh -v -o StrictHostKeyChecking=no root@68.183.230.58 "./checkout_staging.sh"
+
+
+
+
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      # - build
+      - linting:
+      # - unittest:
+      #     requires:
+      #       - build
+      # - deploy_to_staging:
+      #     type: approval
+      #     requires:
+      #       - linting
+      #       - unittest
