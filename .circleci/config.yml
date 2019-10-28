@@ -55,7 +55,7 @@ jobs:
           command: |
             mkdir ~/linting_result
             mkdir ~/linting_result/jest
-            ~/.composer/vendor/bin/phpcs --extensions=php --standard=~/project/dev/tests/static/framework/Magento/ruleset.xml --report-junit=/root/linting_result/jest/result.xml --report-full=/root/linting_result/detail.txt  ~/project/app/code/Custom/
+            ~/.composer/vendor/bin/phpcs  --standard=~/project/dev/tests/static/framework/Magento/ruleset.xml  --extensions=php --report-junit=/root/linting_result/jest/result.xml --report-full=/root/linting_result/detail.txt  ~/project/app/code/Happyhackers/
 
       - store_test_results:
           path: '~/linting_result'
