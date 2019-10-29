@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Custom_User::happyhacker" title="HappyHackers" translate="title" module="Custom_User" sortOrder="60" resource="Custom_User::happyhacker"/>
+        <add id="Custom_User::happy_grandma" title="Grandma Happy" translate="title" module="Custom_User" sortOrder="40" parent="Custom_User::happyhacker"  resource="Custom_User::happy_grandma"/>
+        <add id="Custom_User::hacker" title="Hacker1" translate="title" module="Custom_User" sortOrder="10" parent="Custom_User::happy_grandma" action="happyadminpage/HelloHappyHackers" resource="Custom_User::Mahaone"/>
+        <add id="Custom_User::hacker_two" title="Hacker2" translate="title" module="Custom_User" sortOrder="20" parent="Custom_User::happy_grandma" action="happyadminpage/HelloHappyHackers" resource="Custom_User::Mahatwo"/>
+
+        <!--        another parent to show the sub menu title-->
+        <add id="Custom_User::happy_grandpa" title="Grandpa Happy" translate="title" module="Custom_User" sortOrder="40" parent="Custom_User::happyhacker"  resource="Custom_User::happy_grandpa"/>
+        <add id="Custom_User::happy" title="Happy1" translate="title" module="Custom_User" sortOrder="10" parent="Custom_User::happy_grandpa" action="happyadminpage/HelloHappyHackers" resource="Custom_User::PaHacone"/>
+    </menu>
+</config>

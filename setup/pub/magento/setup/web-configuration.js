@@ -123,7 +123,7 @@ angular.module('web-configuration', ['ngStorage'])
         // Validate URL
         $scope.validateUrl = function () {
             if (!$scope.webconfig.submitted) {
-                $http.post('index.php/url-check', $scope.config)
+                $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/url-check', $scope.config)
                     .then(function successCallback(resp) {
                         $scope.validateUrl.result = resp.data;
 

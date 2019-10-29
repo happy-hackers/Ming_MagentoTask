@@ -40,7 +40,7 @@ main.controller('navigationController',
     function ($scope, $state, navigationService, $localStorage, $interval, $http) {
         $interval(
             function () {
-                $http.post('index.php/session/prolong').then(
+                $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/session/prolong').then(
                     function successCallback() {},
                     function errorCallback() {}
                 );
@@ -117,7 +117,7 @@ main.controller('navigationController',
         load: function () {
             var self = this;
 
-            return $http.get('index.php/navigation').then(function successCallback(resp) {
+            return $http.get('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/navigation').then(function successCallback(resp) {
                 var data = resp.data,
                     currentState = $location.path().replace('/', ''),
                     isCurrentStateFound = false;
@@ -185,7 +185,7 @@ main.controller('navigationController',
                 }
             },
             reset: function (context) {
-                return $http.post('index.php/marketplace/remove-credentials', [])
+                return $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/marketplace/remove-credentials', [])
                     .then(function successCallback(response) {
                         if (response.data.success) {
                             $localStorage.isMarketplaceAuthorized = $rootScope.isMarketplaceAuthorized = false;
@@ -194,7 +194,7 @@ main.controller('navigationController',
                     });
             },
             checkAuth: function(context) {
-                return $http.post('index.php/marketplace/check-auth', [])
+                return $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/marketplace/check-auth', [])
                     .then(function successCallback(response) {
                         var data = response.data;
 
@@ -212,7 +212,7 @@ main.controller('navigationController',
                     });
             },
             openAuthDialog: function(scope) {
-                return $http.get('index.php/marketplace/popup-auth').then(function successCallback(resp) {
+                return $http.get('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/marketplace/popup-auth').then(function successCallback(resp) {
                     var data = resp.data;
 
                     scope.isHiddenSpinner = true;
@@ -229,7 +229,7 @@ main.controller('navigationController',
                 return ngDialog.close();
             },
             saveAuthJson: function (context) {
-                return $http.post('index.php/marketplace/save-auth-json', context.user)
+                return $http.post('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/marketplace/save-auth-json', context.user)
                     .then(function successCallback(response) {
                         var data = response.data;
 

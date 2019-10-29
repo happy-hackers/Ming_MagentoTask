@@ -9,7 +9,7 @@ angular.module('update-extension-grid', ['ngStorage', 'clickOut'])
         function ($scope, $http, $localStorage, titleService, authService, paginationService, multipleChoiceService) {
             $scope.isHiddenSpinner = false;
 
-            $http.get('index.php/updateExtensionGrid/extensions').then(function successCallback(resp) {
+            $http.get('Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/updateExtensionGrid/extensions').then(function successCallback(resp) {
                 var data = resp.data;
 
                 $scope.error = false;

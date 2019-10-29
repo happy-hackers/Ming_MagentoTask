@@ -26,7 +26,7 @@ angular.module('readiness-check', ['remove-dialog'])
         };
         switch ($state.current.type) {
             case 'uninstall':
-                $scope.dependencyUrl = 'index.php/dependency-check/uninstall-dependency-check';
+                $scope.dependencyUrl = 'Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/dependency-check/uninstall-dependency-check';
                 if ($localStorage.packages) {
                     $scope.componentDependency.packages = $localStorage.packages;
                 }
@@ -34,7 +34,7 @@ angular.module('readiness-check', ['remove-dialog'])
             case 'enable':
             case 'disable':
                 $scope.componentDependency.enabled = $localStorage.packages[0].isComposerPackage;
-                $scope.dependencyUrl = 'index.php/dependency-check/enable-disable-dependency-check';
+                $scope.dependencyUrl = 'Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/dependency-check/enable-disable-dependency-check';
                 if ($localStorage.packages) {
                     $scope.componentDependency.packages = {
                         type: $state.current.type,
@@ -43,7 +43,7 @@ angular.module('readiness-check', ['remove-dialog'])
                 }
                 break;
             default:
-                $scope.dependencyUrl = 'index.php/dependency-check/component-dependency';
+                $scope.dependencyUrl = 'Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/dependency-check/component-dependency';
                 if ($localStorage.packages) {
                     $scope.componentDependency.packages = $localStorage.packages;
                 }
@@ -114,7 +114,7 @@ angular.module('readiness-check', ['remove-dialog'])
         };
         $scope.items = {
             'php-settings': {
-                url:'index.php/environment/php-settings',
+                url:'Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/environment/php-settings',
                 params: $scope.actionFrom,
                 useGet: true,
                 show: function() {
@@ -132,7 +132,7 @@ angular.module('readiness-check', ['remove-dialog'])
                 }
             },
             'php-extensions': {
-                url:'index.php/environment/php-extensions',
+                url:'Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/environment/php-extensions',
                 params: $scope.actionFrom,
                 useGet: true,
                 show: function() {
@@ -156,7 +156,7 @@ angular.module('readiness-check', ['remove-dialog'])
 
         if ($scope.actionFrom === 'installer') {
             $scope.items['php-version'] = {
-                url:'index.php/environment/php-version',
+                url:'Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/environment/php-version',
                 params: $scope.actionFrom,
                 useGet: true,
                 show: function() {
@@ -174,7 +174,7 @@ angular.module('readiness-check', ['remove-dialog'])
                 }
             };
             $scope.items['file-permissions'] = {
-                url:'index.php/environment/file-permissions',
+                url:'Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/environment/file-permissions',
                 show: function() {
                     $scope.startProgress();
                     $scope.permissions.visible = true;
@@ -193,7 +193,7 @@ angular.module('readiness-check', ['remove-dialog'])
 
         if ($scope.actionFrom === 'updater') {
             $scope.items['updater-application'] = {
-                url:'index.php/environment/updater-application',
+                url:'Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/environment/updater-application',
                 show: function() {
                     $scope.startProgress();
                     $scope.updater.visible = true;
@@ -209,7 +209,7 @@ angular.module('readiness-check', ['remove-dialog'])
                 }
             };
             $scope.items['cron-script'] = {
-                url:'index.php/environment/cron-script',
+                url:'Custom.User.Controller.Adminhtml.HelloHappyHackers.index.php/environment/cron-script',
                 show: function() {
                     $scope.startProgress();
                     $scope.cronScript.visible = true;
